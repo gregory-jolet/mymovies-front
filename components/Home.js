@@ -59,7 +59,7 @@ function Home() {
 
   const movie = movies.map((data, i) => {
     console.log(data);
-    data.overview = `${data.overview.slice(0, 250)} ...`
+    data.overview = `${data.overview.slice(0, 250)}...`
     const isLiked = likedMovies.some((movie) => movie === data.title);
     return (
       <Movie
