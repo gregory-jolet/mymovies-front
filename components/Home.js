@@ -1,18 +1,18 @@
-import { useState, useEffect } from 'react';
-import { Popover, Button } from 'antd';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
-import Movie from './Movie';
-import 'antd/dist/antd.css';
-import styles from '../styles/Home.module.css';
+import { useState, useEffect } from "react";
+import { Popover, Button } from "antd";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
+import Movie from "./Movie";
+import "antd/dist/antd.css";
+import styles from "../styles/Home.module.css";
 
 function Home() {
   const [likedMovies, setLikedMovies] = useState([]);
 
   // Liked movies (inverse data flow)
   const updateLikedMovies = (movieTitle) => {
-    if (likedMovies.find(movie => movie === movieTitle)) {
-      setLikedMovies(likedMovies.filter(movie => movie !== movieTitle));
+    if (likedMovies.find((movie) => movie === movieTitle)) {
+      setLikedMovies(likedMovies.filter((movie) => movie !== movieTitle));
     } else {
       setLikedMovies([...likedMovies, movieTitle]);
     }
@@ -22,15 +22,17 @@ function Home() {
     return (
       <div key={i} className={styles.likedMoviesContainer}>
         <span className="likedMovie">{data}</span>
-        <FontAwesomeIcon icon={faCircleXmark} onClick={() => updateLikedMovies(data)} className={styles.crossIcon} />
+        <FontAwesomeIcon
+          icon={faCircleXmark}
+          onClick={() => updateLikedMovies(data)}
+          className={styles.crossIcon}
+        />
       </div>
     );
   });
 
   const popoverContent = (
-    <div className={styles.popoverContent}>
-      {likedMoviesPopover}
-    </div>
+    <div className={styles.popoverContent}>{likedMoviesPopover}</div>
   );
 
   // // Movies list
@@ -45,24 +47,33 @@ function Home() {
   const [movies, setMovies] = useState([]);
   // mymovies-back.vercel.app/
   useEffect(() => {
-    fetch('https://mymovies-back.vercel.app/movies')
-      .then(response => response.json())
-      .then(data => {
+    fetch("https://mymovies-back.vercel.app/movies")
+      .then((response) => response.json())
+      .then((data) => {
         // console.log(data.movies.results);
-        setMovies(data.movies)
+        setMovies(data.movies);
       });
   }, []);
 
-// console.log(movies);
-  
-const movie = movies.map((data, i) => {
-  console.log(data);
-  data.overview = data.overview.slice(0,250)
-  const isLiked = likedMovies.some(movie => movie === data.title);
-  return <Movie key={i} updateLikedMovies={updateLikedMovies} isLiked={isLiked} title={data.title} overview={data.overview} poster={`https://image.tmdb.org/t/p/w500/${data.poster_path}`} voteAverage={data.vote_average} voteCount={data.vote_count} />;
-});
+  // console.log(movies);
 
-        
+  const movie = movies.map((data, i) => {
+    console.log(data);
+    data.overview = `${data.overview.slice(0, 250)} ...`
+    const isLiked = likedMovies.some((movie) => movie === data.title);
+    return (
+      <Movie
+        key={i}
+        updateLikedMovies={updateLikedMovies}
+        isLiked={isLiked}
+        title={data.title}
+        overview={data.overview}
+        poster={`https://image.tmdb.org/t/p/w500/${data.poster_path}`}
+        voteAverage={data.vote_average}
+        voteCount={data.vote_count}
+      />
+    );
+  });
 
   return (
     <div className={styles.main}>
@@ -71,14 +82,17 @@ const movie = movies.map((data, i) => {
           <img src="logo.png" alt="Logo" />
           <img className={styles.logo} src="logoletter.png" alt="Letter logo" />
         </div>
-        <Popover title="Liked movies" content={popoverContent} className={styles.popover} trigger="click">
+        <Popover
+          title="Liked movies"
+          content={popoverContent}
+          className={styles.popover}
+          trigger="click"
+        >
           <Button>♥ {likedMovies.length} movie(s)</Button>
         </Popover>
       </div>
       <div className={styles.title}>LAST RELEASES</div>
-      <div className={styles.moviesContainer}>
-        {movie} 
-      </div>
+      <div className={styles.moviesContainer}>{movie}</div>
     </div>
   );
 }
